@@ -4,7 +4,7 @@ Current Problems:
 - gradSum freaks out when gradient reaches infinity (drawing straight up or down)
 - gradSum stops working when line stops moving (this is because it updates every 200 ms and expects a new values)
 - converting the oscillator to take unique mp3 sounds (web audio api can definitely do this but can it take them via the oscillator?)
-- no additional colour features
+- no additional colour features (only green)
 - drawing line currently isn't a solid line (again due to the 200ms update) --> could probably easily solve by calculating extra set of co-ords inside the updatePage function
 */
 
