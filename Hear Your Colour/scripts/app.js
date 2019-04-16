@@ -89,14 +89,7 @@ function init() {
   var ang1 = 0;
   var ang2 = 0;
   var dAng = 0;
-  var sumdAng = 210; // range is 20-420 (can be expanded if we want)
-
-  // old gradient calculation variables
-  /*
-  var grad = 0;
-  var gradSum = Math.min(Math.max(parseInt(gradSum), 0), 40);
-  gradSum = 20; // to avoid having negative gradients that would confuse the frequency
-  */
+  var sumdAng = 210; // range is 20-420 (can be expanded if we want/like)
   
   window.onpointermove = getCoordinates;
 
@@ -200,9 +193,18 @@ function init() {
 
   // Updating frequency according to gradient
 
-  document.onpointermove = updatePage;
+  var mouseDown = 0;
+  document.body.onmousedown = function() {
+    mouseDown = 1;
+  }
+  document.body.onmouseup = function() {
+    mouseDown = 0;
+  }
+
+  document.onmousemove = updatePage;
 
   function updatePage(e) {
+    if (mouseDown == 1) {
 
       // debugging console checks go here
 
@@ -212,7 +214,7 @@ function init() {
       gainNode.gain.value = maxVol;
 
       canvasDraw(ctx,coX,coY,12);
-
+    }
   }
 
 
@@ -253,7 +255,10 @@ function init() {
       lastY = y;
     }
 
-    r=0; g=255; b=0; a=255;
+    r = 0; 
+    g = 255; 
+    b = 0; 
+    a = 255;
 
       ctx.strokeStyle = "rgba("+r+","+g+","+b+","+(a/255)+")";
       ctx.lineCap = 'round';
