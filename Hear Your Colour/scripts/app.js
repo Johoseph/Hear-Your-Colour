@@ -7,6 +7,11 @@ Current Problems:
 - converting the oscillator to take unique mp3 sounds (web audio api can definitely do this but can it take them via the oscillator?) - looking into gainNode and speed changing
 - no additional colour features (only green)
 - drawing line currently isn't a solid line --> updated vtx to draw a line but only partly fixed? it's better but not perfect
+To do:
+- Change from 'onpointermove' to on mouse down
+- Add multiple colour options
+- MP3s
+- Reset button resets sound variables as well
 */
 
 /*
