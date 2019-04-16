@@ -2,11 +2,11 @@
 Fixed problems:
 - sound now adjusts to rotation rather than gradient
 - frequency has a fixed limit :)
+- sumdAng now uses if statements that fix the problem rotating across the positive x axis (0/360 degrees)
 Current Problems:
-- sumdAng doesnt know what to do when rotating from 360 degrees to 0
-- converting the oscillator to take unique mp3 sounds (web audio api can definitely do this but can it take them via the oscillator?)
+- converting the oscillator to take unique mp3 sounds (web audio api can definitely do this but can it take them via the oscillator?) - looking into gainNode and speed changing
 - no additional colour features (only green)
-- drawing line currently isn't a solid line (again due to the 200ms update) --> could probably easily solve by calculating extra set of co-ords inside the updatePage function
+- drawing line currently isn't a solid line --> could probably easily solve by calculating extra set of co-ords inside the updatePage function (tried this but didn't completely fix)
 */
 
 /*
