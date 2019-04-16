@@ -1,8 +1,8 @@
 /*
+Fixed problems:
+- sound now adjusts to rotation rather than gradient
 Current Problems:
-- gradSum does not cap at frequency values --> math.floor or math.max/min
-- gradSum freaks out when gradient reaches infinity (drawing straight up or down)
-- gradSum stops working when line stops moving (this is because it updates every 200 ms and expects a new values)
+- sumdAng doesnt know what to do when rotating from 360 degrees to 0
 - converting the oscillator to take unique mp3 sounds (web audio api can definitely do this but can it take them via the oscillator?)
 - no additional colour features (only green)
 - drawing line currently isn't a solid line (again due to the 200ms update) --> could probably easily solve by calculating extra set of co-ords inside the updatePage function
@@ -64,7 +64,7 @@ function init() {
   gainNode.gain.minValue = initialVol;
   gainNode.gain.maxValue = initialVol;
 
-  // Variables: coordinates, gradient
+  // Initialising variables: coordinates, gradient
 
   var coX = 0;
   var coY = 0;
@@ -72,23 +72,43 @@ function init() {
   var y1 = 0;
   var x2 = 0;
   var y2 = 0;
-  var dX = 0;
-  var dY = 0;
+  var x3 = 0;
+  var y3 = 0;
+  var x4 = 0;
+  var y4 = 0;
+  var dX1 = 0;
+  var dY1 = 0;
+  var dX2 = 0;
+  var dY2 = 0;
+  var ang1 = 0;
+  var ang2 = 0;
+  var dAng = 0;
+  var sumdAng = 200; // range is ~0-400
+
+  // old gradient calculation variables
+  /*
   var grad = 0;
   var gradSum = Math.min(Math.max(parseInt(gradSum), 0), 40);
   gradSum = 20; // to avoid having negative gradients that would confuse the frequency
+  */
   
-  window.onmousemove = getCoordinates;
+  window.onpointermove = getCoordinates;
 
   function getCoordinates(e) { 
     coX = e.pageX; coY = e.pageY; 
   }
 
-  // setting each variable step-by-step every 100 milliseconds (then tracked every 200 ms)
+  // setting each variable step-by-step 
   setInterval(function() { 
     x1 = coX;
     y1 = coY;
   } , 200);
+  setTimeout(function() {
+    setInterval(function() {
+      x3 = coX;
+      y3 = coY;
+    }, 200)
+  }, 50);
   setTimeout(function() {
     setInterval(function() { 
     x2 = coX;
@@ -97,10 +117,79 @@ function init() {
   } , 100);
   setTimeout(function() {
     setInterval(function() { 
-    dX = (1)*(x2 - x1);
-    dY = (-1)*(y2 - y1);
+    x4 = coX;
+    y4 = coY; 
+    } , 200);
+  } , 150);
+  setTimeout(function() {
+    setInterval(function() {
+    dX1 = (x2 - x1);
+    dY1 = (y1 - y2); 
+    dX2 = (x4 - x3);
+    dY2 = (y3 - y4);
+    } , 200);
+  } , 175);
+  setTimeout(function() { 
+    setInterval(function() {
+      if (dX1 > 0 && dY1 > 0) {
+        ang1 = Math.atan(dY1/dX1)*180/Math.PI;
+      } else if (dX1 < 0 && dY1 > 0) {
+        ang1 = 90 - ((-1)*Math.atan(dY1/dX1)*180/Math.PI) + 90;
+      } else if (dX1 < 0 && dY1 < 0) {
+        ang1 = Math.atan(dY1/dX1)*180/Math.PI + 180;
+      } else if (dX1 > 0 && dY1 < 0) {
+        ang1 = 90 - ((-1)*Math.atan(dY1/dX1)*180/Math.PI) + 270;
+      } else if (dY1 == 0 && dX1 > 0) {
+        ang1 = 0;
+      } else if (dY1 == 0 && dX1 < 0) {
+        ang1 = 180;
+      } else if (dX1 == 0 && dY1 > 0) {
+        ang1 = 90;
+      } else if (dX1 == 0 && dY1 < 0) {
+        ang1 = 270;
+      } else {
+        ang1 = ang1;
+      }
     } , 200);
   } , 200);
+  setTimeout(function() {
+    setInterval(function() {
+      if (dX2 > 0 && dY2 > 0) {
+        ang2 = Math.atan(dY2/dX2)*180/Math.PI;
+      } else if (dX2 < 0 && dY2 > 0) {
+        ang2 = 90 - ((-1)*Math.atan(dY2/dX2)*180/Math.PI) + 90;
+      } else if (dX2 < 0 && dY2 < 0) {
+        ang2 = Math.atan(dY2/dX2)*180/Math.PI + 180;
+      } else if (dX2 > 0 && dY2 < 0) {
+        ang2 = 90 - ((-1)*Math.atan(dY2/dX2)*180/Math.PI) + 270;
+      } else if (dY2 == 0 && dX2 > 0) {
+        ang2 = 0;
+      } else if (dY2 == 0 && dX2 < 0) {
+        ang2 = 180;
+      } else if (dX2 == 0 && dY2 > 0) {
+        ang2 = 90;
+      } else if (dX2 == 0 && dY2 < 0) {
+        ang2 = 270;
+      } else {
+        ang2 = ang2;
+      }
+    }, 200)
+  }, 200);
+  setTimeout(function() {
+    setInterval(function() {
+      dAng = ang2 - ang1;
+    }, 200)
+  }, 210);
+  setTimeout(function() {
+    setInterval(function() {
+      sumdAng = dAng + sumdAng;
+    }, 200)
+  }, 220);
+  
+  
+  
+  // old gradient calculating functions
+  /*
   setTimeout(function() {
     setInterval(function() { 
     grad = dY/dX;
@@ -111,17 +200,23 @@ function init() {
     gradSum = grad + gradSum;
     } , 200);
   } , 400);
+  */
 
   // Updating frequency according to gradient
 
-  document.onmousemove = updatePage;
+  document.onpointermove = updatePage;
 
   function updatePage(e) {
       KeyFlag = false;
 
-      console.log(gradSum);
+      uX = (window.Event) ? e.pageX : event.clientX + (document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft);
+      uY = (window.Event) ? e.pageY : event.clientY + (document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop);
 
-      oscillator.frequency.value = (gradSum/40) * maxFreq; // 0-40 is the frequency range
+      // debugging console checks go here
+
+      console.log(ang1, ang2, sumdAng);
+
+      oscillator.frequency.value = (sumdAng/400) * maxFreq; // 0-40 is the frequency range
       gainNode.gain.value = maxVol;
 
       canvasDraw();
@@ -147,7 +242,7 @@ function init() {
 
 
 
-  // canvas visualization
+  // canvas visualization (look into improving this)
 
   var canvas = document.querySelector('.canvas');
   canvas.width = WIDTH;
@@ -160,19 +255,19 @@ function init() {
       rX = KeyX;
       rY = KeyY;
     } else {
-      rX = coX;
-      rY = coY;
+      rX = uX;
+      rY = uY;
     }
 
       canvasCtx.beginPath();
       canvasCtx.fillStyle = 'green';
-      canvasCtx.arc(rX,rY,2,(Math.PI/180)*0,(Math.PI/180)*360,false); // canvasCtx.arc(x,y,radius,starting angle,finishing angle,repeat)
+      canvasCtx.arc(rX,rY,4,(Math.PI/180)*0,(Math.PI/180)*360,false); // canvasCtx.arc(x,y,radius,starting angle,finishing angle,repeat)
       canvasCtx.fill(); // fills in arc
       canvasCtx.closePath(); 
   }
   
 
-  // clear screen
+  // clear screen (need to add reset variables thingo)
 
   var clear = document.querySelector('.clear');
 
