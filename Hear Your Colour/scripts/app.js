@@ -6,7 +6,7 @@ Fixed problems:
 Current Problems:
 - converting the oscillator to take unique mp3 sounds (web audio api can definitely do this but can it take them via the oscillator?) - looking into gainNode and speed changing
 - no additional colour features (only green)
-- drawing line currently isn't a solid line --> could probably easily solve by calculating extra set of co-ords inside the updatePage function (tried this but didn't completely fix)
+- drawing line currently isn't a solid line --> updated vtx to draw a line but only partly fixed? it's better but not perfect
 */
 
 /*
@@ -84,7 +84,7 @@ function init() {
   var ang1 = 0;
   var ang2 = 0;
   var dAng = 0;
-  var sumdAng = 200; // range is ~0-400
+  var sumdAng = 210; // range is ~20-420
 
   // old gradient calculation variables
   /*
@@ -189,44 +189,24 @@ function init() {
   }, 210);
   setTimeout(function() {
     setInterval(function() {
-        sumdAng = dAng + sumdAng > 400 ? 400 : dAng + sumdAng < 0 ? 0 : dAng + sumdAng;
+        sumdAng = dAng + sumdAng > 420 ? 420 : dAng + sumdAng < 20 ? 20 : dAng + sumdAng;
     }, 200)
   }, 220);
-  
-  
-  
-  // old gradient calculating functions
-  /*
-  setTimeout(function() {
-    setInterval(function() { 
-    grad = dY/dX;
-    } , 200);
-  } , 300);
-  setTimeout(function() {
-    setInterval(function() { 
-    gradSum = grad + gradSum;
-    } , 200);
-  } , 400);
-  */
 
   // Updating frequency according to gradient
 
   document.onpointermove = updatePage;
 
   function updatePage(e) {
-      KeyFlag = false;
-
-      uX = (window.Event) ? e.pageX : event.clientX + (document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft);
-      uY = (window.Event) ? e.pageY : event.clientY + (document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop);
 
       // debugging console checks go here
 
-      console.log(ang1, ang2, sumdAng);
+      console.log(sumdAng);
 
-      oscillator.frequency.value = (sumdAng/400) * maxFreq; // 0-40 is the frequency range
+      oscillator.frequency.value = (sumdAng/420) * maxFreq; // 0-40 is the frequency range
       gainNode.gain.value = maxVol;
 
-      canvasDraw();
+      canvasDraw(ctx,coX,coY,12);
   }
 
 
@@ -249,28 +229,39 @@ function init() {
 
 
 
-  // canvas visualization (look into improving this)
+  // canvas visualization
 
   var canvas = document.querySelector('.canvas');
   canvas.width = WIDTH;
   canvas.height = HEIGHT;
 
-  var canvasCtx = canvas.getContext('2d');
+  var ctx = canvas.getContext('2d');
 
-  function canvasDraw() {
-    if(KeyFlag == true) {
-      rX = KeyX;
-      rY = KeyY;
-    } else {
-      rX = uX;
-      rY = uY;
+  var lastX = -1
+  var lastY = -1
+
+  function canvasDraw(ctx, x, y, size) {
+
+    if (lastX == -1) {
+      lastX = x;
+      lastY = y;
     }
 
-      canvasCtx.beginPath();
-      canvasCtx.fillStyle = 'green';
-      canvasCtx.arc(rX,rY,4,(Math.PI/180)*0,(Math.PI/180)*360,false); // canvasCtx.arc(x,y,radius,starting angle,finishing angle,repeat)
-      canvasCtx.fill(); // fills in arc
-      canvasCtx.closePath(); 
+    r=0; g=255; b=0; a=255;
+
+      ctx.strokeStyle = "rgba("+r+","+g+","+b+","+(a/255)+")";
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(x,y);
+      ctx.lineTo(x,y);
+      ctx.lineWidth = size;
+      ctx.stroke();
+      // ctx.arc(coX,coY,4,(Math.PI/180)*0,(Math.PI/180)*360,false); // canvasCtx.arc(x,y,radius,starting angle,finishing angle,repeat)
+      // ctx.fill(); // fills in arc
+      ctx.closePath(); 
+
+      lastX = x;
+      lastY = y;
   }
   
 
@@ -279,7 +270,7 @@ function init() {
   var clear = document.querySelector('.clear');
 
   clear.onclick = function() {
-    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 
 }
