@@ -1,6 +1,7 @@
 /*
 Fixed problems:
 - sound now adjusts to rotation rather than gradient
+- frequency has a fixed limit :)
 Current Problems:
 - sumdAng doesnt know what to do when rotating from 360 degrees to 0
 - converting the oscillator to take unique mp3 sounds (web audio api can definitely do this but can it take them via the oscillator?)
@@ -177,12 +178,18 @@ function init() {
   }, 200);
   setTimeout(function() {
     setInterval(function() {
-      dAng = ang2 - ang1;
+        if (ang2 + 250 < ang1) {
+        dAng = (ang2 + 360) - ang1;
+        } else if (ang1 + 250 < ang2) {
+        dAng = ang2 - (ang1 + 360);
+        } else {
+        dAng = ang2 - ang1;  
+        }
     }, 200)
   }, 210);
   setTimeout(function() {
     setInterval(function() {
-      sumdAng = dAng + sumdAng;
+        sumdAng = dAng + sumdAng > 400 ? 400 : dAng + sumdAng < 0 ? 0 : dAng + sumdAng;
     }, 200)
   }, 220);
   
