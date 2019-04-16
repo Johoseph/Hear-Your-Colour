@@ -3,6 +3,7 @@ Fixed problems:
 - sound now adjusts to rotation rather than gradient
 - frequency has a fixed limit :)
 - sumdAng now uses if statements that fix the problem rotating across the positive x axis (0/360 degrees)
+- reset button now additionally resets actually sound/values
 Current Problems:
 - converting the oscillator to take unique mp3 sounds (web audio api can definitely do this but can it take them via the oscillator?) - looking into gainNode and speed changing
 - no additional colour features (only green)
@@ -11,11 +12,10 @@ To do:
 - Change from 'onpointermove' to on mouse down
 - Add multiple colour options
 - MP3s
-- Reset button resets sound variables as well
 */
 
 /*
-This script has been adapted from the 'violet theremin' project: https://github.com/mdn/violent-theremin
+This script has loosely based on the 'violet theremin' project: https://github.com/mdn/violent-theremin
 Other useful web api links:
 - https://codepen.io/anon/pen/vMyQyd (playing mp3)
 - https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Using_Web_Audio_API (web api intro)
@@ -89,7 +89,7 @@ function init() {
   var ang1 = 0;
   var ang2 = 0;
   var dAng = 0;
-  var sumdAng = 210; // range is ~20-420
+  var sumdAng = 210; // range is 20-420 (can be expanded if we want)
 
   // old gradient calculation variables
   /*
@@ -212,6 +212,7 @@ function init() {
       gainNode.gain.value = maxVol;
 
       canvasDraw(ctx,coX,coY,12);
+
   }
 
 
@@ -276,6 +277,24 @@ function init() {
 
   clear.onclick = function() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+      coX = 0;
+      coY = 0;
+      x1 = 0;
+      y1 = 0;
+      x2 = 0;
+      y2 = 0;
+      x3 = 0;
+      y3 = 0;
+      x4 = 0;
+      y4 = 0;
+      dX1 = 0;
+      dY1 = 0;
+      dX2 = 0;
+      dY2 = 0;
+      ang1 = 0;
+      ang2 = 0;
+      dAng = 0;
+      sumdAng = 210;
   }
 
 }
