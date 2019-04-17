@@ -4,14 +4,16 @@ Fixed problems:
 - frequency has a fixed limit :)
 - sumdAng now uses if statements that fix the problem rotating across the positive x axis (0/360 degrees)
 - reset button now additionally resets actually sound/values
+- onmousedown works
 Current Problems:
 - converting the oscillator to take unique mp3 sounds (web audio api can definitely do this but can it take them via the oscillator?) - looking into gainNode and speed changing
 - no additional colour features (only green)
 - drawing line currently isn't a solid line --> updated vtx to draw a line but only partly fixed? it's better but not perfect
 To do:
-- Change from 'onpointermove' to on mouse down
 - Add multiple colour options
 - MP3s
+- adapt for touch capabilities
+- bind on screen prompts to keyboard keys (reset done)
 */
 
 /*
@@ -187,7 +189,7 @@ function init() {
   }, 210);
   setTimeout(function() {
     setInterval(function() {
-        sumdAng = dAng + sumdAng > 420 ? 420 : dAng + sumdAng < 20 ? 20 : dAng + sumdAng;
+        sumdAng = dAng + sumdAng > 420 ? 420 : dAng + sumdAng < 20 ? 20 : dAng + sumdAng; // limits sumdAng between 20 and 420
     }, 200)
   }, 220);
 
@@ -214,6 +216,9 @@ function init() {
       gainNode.gain.value = maxVol;
 
       canvasDraw(ctx,coX,coY,12);
+
+    } else {
+      gainNode.gain.value = 0;
     }
   }
 
@@ -234,7 +239,6 @@ function init() {
       mute.innerHTML = "Mute";
     };
   }
-
 
 
   // canvas visualization
@@ -267,8 +271,6 @@ function init() {
       ctx.lineTo(x,y);
       ctx.lineWidth = size;
       ctx.stroke();
-      // ctx.arc(coX,coY,4,(Math.PI/180)*0,(Math.PI/180)*360,false); // canvasCtx.arc(x,y,radius,starting angle,finishing angle,repeat)
-      // ctx.fill(); // fills in arc
       ctx.closePath(); 
 
       lastX = x;
@@ -276,12 +278,13 @@ function init() {
   }
   
 
-  // clear screen (need to add reset variables thingo)
+  // clear screen
 
-  var clear = document.querySelector('.clear');
-
-  clear.onclick = function() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  document.onkeydown = function(keyPressR) {
+    keyPressR = keyPressR || window.event;
+    var key = keyPressR.which || keyPressR.keyCode;
+      if(key === 82) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       coX = 0;
       coY = 0;
       x1 = 0;
@@ -300,6 +303,6 @@ function init() {
       ang2 = 0;
       dAng = 0;
       sumdAng = 210;
+      }
   }
-
 }
