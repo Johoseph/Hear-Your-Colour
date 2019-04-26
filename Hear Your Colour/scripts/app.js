@@ -5,9 +5,8 @@ NOTES
 
 /*
 PROBLEMS/TO-DO
-- Adding multiple colours with associated mp3s
 - Fixing canvas visualisation (lines remain solid no matter how fast the cursor moves)
-- Adapting the system for touch interaction with the PX screen
+- Additional functionalites: volume, colour mixing, screen recording/playback
 */
 
 /*
@@ -47,6 +46,8 @@ function init() {
   /*
   The getData functions are used to get all the specific sounds. 
   */
+
+  // loading mp3 for green
   function getGreenData() {
   source = audioCtx.createBufferSource(); // creating sound source element
   request = new XMLHttpRequest();
@@ -66,6 +67,7 @@ function init() {
   request.send();
   }
 
+  // loading mp3 for blue
   function getBlueData() {
   source = audioCtx.createBufferSource(); // creating sound source element
   request = new XMLHttpRequest();
@@ -85,6 +87,7 @@ function init() {
   request.send();
   }
 
+  // loading mp3 for red
   function getRedData() {
   source = audioCtx.createBufferSource(); // creating sound source element
   request = new XMLHttpRequest();
@@ -145,7 +148,7 @@ function init() {
   // creating varialbes to control volume (gain)
   var maxVol = 1.0;
 
-  // creating variables to calculate line angles
+  // creating variables to calculate line angles (mouse)
   var coX; // the position of the cursor on the x-axis
   var coY; // the position of the cursor on the y-axis
   var x1 = 0; // the position of the cursor on the x-axis every 200ms (0ms delay)
@@ -166,19 +169,57 @@ function init() {
   var sumdAng = 210; // the sum of dAng over time
   
   // getCoordinates will be called everytime the mouse pointer moves
-  window.onpointermove = getCoordinates;
+  window.onmousemove = getCoordinates;
 
   /*
   The getCoordinates function is used to set cursor coordinates to variables
   */
   function getCoordinates(e) { 
-    coX = e.pageX; coY = e.pageY; 
+    coX = e.pageX;
+    coY = e.pageY; 
+  }
+
+  // creating variables to calculate line angles (touch)
+  var touchX; // the position of a touch on the x-axis
+  var touchY; // the position of a touch on the y-axis
+  var x1T = 0; // the position of a touch on the x-axis every 200ms (0ms delay)
+  var y1T = 0; // the position of a touch on the y-axis every 200ms (0ms delay)
+  var x2T = 0; // the position of a touch on the x-axis every 200ms (100ms delay)
+  var y2T = 0; // the position of a touch on the y-axis every 200ms (100ms delay)
+  var x3T = 0; // the position of a touch on the x-axis every 200ms (50ms delay)
+  var y3T = 0; // the position of a touch on the y-axis every 200ms (50ms delay)
+  var x4T = 0; // the position of a touch on the x-axis every 200ms (150ms delay)
+  var y4T = 0; // the position of a touch on the y-axis every 200ms (150ms delay)
+  var dX1T = 0; // the distance a pen has moved on the x-axis (between x1 and x2)
+  var dY1T = 0; // the distance a pen has moved on the y-axis (between y1 and y2)
+  var dX2T = 0; // the distance a pen has moved on the x-axis (between x3 and x4)
+  var dY2T = 0; // the distance a pen has moved on the x-axis (between y3 and x4)
+  var ang1T = 0; // the rotation of the line created by dX1 and dY1 (0-360 degrees)
+  var ang2T = 0; // the rotation of the line created by dX2 and dY2 (0-360 degrees)
+  var dAngT = 0; // the difference between ang1 and ang2 (degrees)
+  var sumdAngT = 210; // the sum of dAng over time
+
+  /*
+  The getTouchPos function is used to set touch coordinates to variables
+  */
+  function getTouchPos(e) {
+    if (!e)
+      var e = event;
+
+    if(e.touches) {
+      if (e.touches.length == 1) { // verifying that there is only 1 touch
+        var touch = e.touches[0]; // takes the information for the touch
+        touchX = touch.pageX;
+        touchY = touch.pageY;
+      }
+    }
   }
 
   /*
-  The below code is used to calculate the sumdAng variable which is used to control playback rate based on line rotation over time
+  The below code is used to calculate the sumdAng (mouse) and sumdAngT (touch) variables which are used to control playback rate based on line rotation over time
   */
 
+  // sumdAng -> mouse calculation
   // 0ms -> storing the cursor coordinates every 200ms
   setInterval(function() { 
     x1 = coX;
@@ -205,7 +246,7 @@ function init() {
   setTimeout(function() {
     setInterval(function() { 
     x4 = coX;
-    y4 = coY; 
+    y4 = coY;
     } , 200);
   } , 150);
 
@@ -289,6 +330,117 @@ function init() {
     }, 200)
   }, 220);
 
+  // sumdAngT -> touch calculation
+  // 0ms -> storing the cursor coordinates every 200ms
+  setInterval(function() { 
+    x1T = touchX;
+    y1T = touchY;
+  } , 200);
+
+  // 50ms -> storing the cursor coordinates every 200ms
+  setTimeout(function() {
+    setInterval(function() {
+      x3T = touchX;
+      y3T = touchY;
+    }, 200)
+  }, 50);
+
+  // 100ms -> storing the cursor coordinates every 200ms
+  setTimeout(function() {
+    setInterval(function() { 
+    x2T = touchX;
+    y2T = touchY;
+    } , 200);
+  } , 100);
+
+  // 150ms -> storing the cursor coordinates every 200ms
+  setTimeout(function() {
+    setInterval(function() { 
+    x4T = touchX;
+    y4T = touchY;
+    } , 200);
+  } , 150);
+
+  // 175ms -> calculating change in cursor position every 200ms
+  setTimeout(function() {
+    setInterval(function() {
+    dX1T = (x2T - x1T);
+    dY1T = (y1T - y2T); 
+    dX2T = (x4T - x3T);
+    dY2T = (y3T - y4T);
+    } , 200);
+  } , 175);
+
+  // 200ms -> calculating the rotation the line created by arctan(dY1/dX1)
+  setTimeout(function() { 
+    setInterval(function() {
+      if (dX1T > 0 && dY1T > 0) { // Quadrant I (+dX1, +dY1)
+        ang1T = Math.atan(dY1T/dX1T)*180/Math.PI;
+      } else if (dX1T < 0 && dY1T > 0) { // Quadrant II (-dX1, +dY1)
+        ang1T = 90 - ((-1)*Math.atan(dY1T/dX1T)*180/Math.PI) + 90;
+      } else if (dX1T < 0 && dY1T < 0) { // Quadrant III (-dX1, -dY1)
+        ang1T = Math.atan(dY1T/dX1T)*180/Math.PI + 180;
+      } else if (dX1T > 0 && dY1T < 0) { // Quadrant IV (+dX1, -dY1)
+        ang1T = 90 - ((-1)*Math.atan(dY1T/dX1T)*180/Math.PI) + 270;
+      } else if (dY1T == 0 && dX1T > 0) { // x-axis between Quadrant I and IV
+        ang1T = 0;
+      } else if (dY1T == 0 && dX1T < 0) { // x-axis between Quadrant II and III
+        ang1T = 180;
+      } else if (dX1T == 0 && dY1T > 0) { // y-axis between Quadrant I and II
+        ang1T = 90;
+      } else if (dX1T == 0 && dY1T < 0) { // y-axis between Quadrant III and IV
+        ang1T = 270;
+      } else { // in case something goes wrong, the existing ang1 will be used
+        ang1T = ang1T;
+      }
+    } , 200);
+  } , 200);
+
+  // 200ms -> calculating the rotation the line created by arctan(dY2/dX2)
+  setTimeout(function() {
+    setInterval(function() {
+      if (dX2T > 0 && dY2T > 0) { // Quadrant I (+dX2, +dY2)
+        ang2T = Math.atan(dY2T/dX2T)*180/Math.PI;
+      } else if (dX2T < 0 && dY2T > 0) { // Quadrant II (-dX2, +dY2)
+        ang2T = 90 - ((-1)*Math.atan(dY2T/dX2T)*180/Math.PI) + 90;
+      } else if (dX2T < 0 && dY2T < 0) { // Quadrant III (-dX2, -dY2)
+        ang2T = Math.atan(dY2T/dX2T)*180/Math.PI + 180;
+      } else if (dX2T > 0 && dY2T < 0) { // Quadrant IV (+dX2, -dY2)
+        ang2T = 90 - ((-1)*Math.atan(dY2T/dX2T)*180/Math.PI) + 270;
+      } else if (dY2T == 0 && dX2T > 0) { // x-axis exception between Quadrant I and IV
+        ang2T = 0;
+      } else if (dY2T == 0 && dX2T < 0) { // x-axis exception between Quadrant II and III
+        ang2T = 180;
+      } else if (dX2T == 0 && dY2T > 0) { // y-axis exception between Quadrant I and II
+        ang2T = 90;
+      } else if (dX2T == 0 && dY2T < 0) { // y-axis exception between Quadrant III and IV
+        ang2T = 270;
+      } else { // in case something goes wrong, the existing ang2 will be used
+        ang2T = ang2T;
+      }
+    }, 200)
+  }, 200);
+
+  // 210ms -> calculating the difference between the ang1 and ang2
+  setTimeout(function() {
+    setInterval(function() {
+        if (ang2T + 250 < ang1T) { // exception when moving from Quadrant IV to Quadrant I (360 to 0)
+        dAngT = (ang2T + 360) - ang1T;
+        } else if (ang1T + 250 < ang2T) { // exception when moving from Quadrant I to Quadrant IV (0 to 360)
+        dAngT = ang2T - (ang1T + 360);
+        } else { 
+        dAngT = ang2T - ang1T;  
+        }
+    }, 200)
+  }, 210);
+
+  // 220ms -> summing dAng every 200ms
+  setTimeout(function() {
+    setInterval(function() {
+        sumdAngT = dAngT + sumdAngT > 420 ? 420 : dAngT + sumdAngT < 20 ? 20 : dAngT + sumdAngT; // limits sumdAng to values between 20 and 420
+    }, 200)
+  }, 220);
+
   // creating variables to detect mouse click status
   var mouseDown = 0;
   document.body.onmousedown = function() {
@@ -302,7 +454,7 @@ function init() {
   document.onmousemove = updatePage;
 
   /*
-  The updatePage function is used to produce sound and visuals
+  The updatePage function is used to produce sound and visuals (on mouse down)
   */
   function updatePage(e) {
     if (mouseDown == 1) { // when the mouse is held down 
@@ -313,6 +465,41 @@ function init() {
     } else {
       gainNode.gain.value = 0; // setting the gainNode off when not holding down the mouse
     }
+  }
+
+  // touch functions will be called everytime a touch element changes
+  document.ontouchstart = updatePageTouchStart;
+  document.ontouchmove = updatePageTouchMove;
+  document.ontouchend = updatePageTouchEnd;
+
+  /*
+  The updatePageTouch functions are used to produce sound and visuals (on touch)
+  */
+
+  // runs when a new touch starts
+  function updatePageTouchStart() {
+    getTouchPos(); // updates the touch coordinates
+    console.log(sumdAngT); // testing that sumdAngT is returning accurate information
+    source.playbackRate.value = (sumdAngT/420) * maxPlaybackRate; // calculating the playback rate based on the sumdAngT variable
+    gainNode.gain.value = maxVol; // setting the volume to be max
+    canvasDraw(ctx,touchX,touchY,12);
+    event.preventDefault(); // prevents an additional mousedown event being triggered
+  }
+
+  // runs when an existing touch is moving
+  function updatePageTouchMove(e) { 
+    getTouchPos(e); // updates the touch coordinates
+    console.log(sumdAngT); // testing that sumdAngT is returning accurate information
+    source.playbackRate.value = (sumdAngT/420) * maxPlaybackRate; // calculating the playback rate based on the sumdAngT variable
+    gainNode.gain.value = maxVol; // setting the volume to be max
+    canvasDraw(ctx,touchX,touchY,12); 
+    event.preventDefault(); // prevents scrolling action as a result of this touchmove triggering
+  }
+
+  // runs when an existing touch ends
+  function updatePageTouchEnd(e) {
+    getTouchPos(e); // updates the touch coordinates
+    gainNode.gain.value = 0; // setting the gainNode off when not touching the screen
   }
 
   /*
@@ -338,17 +525,15 @@ function init() {
       lastY = y;
     }
 
-    r1 = 0; 
-    g1 = 255; 
-    b1 = 0; 
+    /* 
+    r = 0; 
+    g = 255; 
+    b = 0; 
     a = 255;
-    r2 = 255; 
-    g2 = 0; 
-    b2 = 0; 
+    */
 
       // defining canvas properties
-      ctx.strokeStyle = colour;
-      // ctx.strokeStyle = "rgba("+r1+","+g1+","+b1+","+(a/255)+")";
+      ctx.strokeStyle = colour; // use "rgba('+r+', '+g+', '+b+', '+(a/255)+')"; for specific rgb colour
       ctx.lineCap = 'round';
       ctx.beginPath();
       ctx.moveTo(x,y);
@@ -360,7 +545,12 @@ function init() {
       lastX = x;
       lastY = y;
   }
-  
+
+  // Adding a canvas clause to react to the touchscreen events on the canvas
+  if (ctx) {
+    canvas.addEventListener('touchstart', updatePageTouchStart, false);
+    canvas.addEventListener('touchmove', updatePageTouchMove, false);
+  }
   
   /*
   The below code is binds the 'r' key to a reset functionality that clears the canvas and resets sound to base values
