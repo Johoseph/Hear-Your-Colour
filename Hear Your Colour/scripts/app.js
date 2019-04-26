@@ -6,7 +6,7 @@ NOTES
 /*
 PROBLEMS/TO-DO
 - Fixing canvas visualisation (lines remain solid no matter how fast the cursor moves)
-- Additional functionalites: volume, colour mixing, screen recording/playback
+- Additional functionalites: colour mixing, screen recording/playback
 */
 
 /*
@@ -109,20 +109,22 @@ function init() {
 
 
   // creating variables to control playback rate
-  var initialPlaybackRate = 1;
   var maxPlaybackRate = 3;
+
+  // creating varialbes to control volume (gain)
+  var maxVol = 5.0;
 
   // requesting and starting mp3 sound playback (initialising with green)
   getGreenData();
   source.start(0);
-  var colour = 'green';
+  var colour = ['0', '255', '0', '255'];
 
   // changing the colour to green
   green.onclick = function() {
     source.stop(0);
     getGreenData();
     source.start(0);
-    colour = 'green';
+    colour = ['0', '255', '0', '255'];
   }
   
   // changing the colour to blue
@@ -130,7 +132,7 @@ function init() {
     source.stop(0);
     getBlueData();
     source.start();
-    colour = 'blue';
+    colour = ['0', '0', '255', '255'];
   }
 
   // changing the colour to red
@@ -138,15 +140,12 @@ function init() {
     source.stop(0)
     getRedData();
     source.start();
-    colour = 'red';
+    colour = ['255', '0', '0', '255'];
   }
 
   // setting screen bound variables
   var WIDTH = window.innerWidth;
   var HEIGHT = window.innerHeight;
-
-  // creating varialbes to control volume (gain)
-  var maxVol = 1.0;
 
   // creating variables to calculate line angles (mouse)
   var coX; // the position of the cursor on the x-axis
@@ -163,6 +162,7 @@ function init() {
   var dY1 = 0; // the distance the cursor has moved on the y-axis (between y1 and y2)
   var dX2 = 0; // the distance the cursor has moved on the x-axis (between x3 and x4)
   var dY2 = 0; // the distance the cursor has moved on the x-axis (between y3 and x4)
+  var dXY = 0; // the distance from point 1 to point 3
   var ang1 = 0; // the rotation of the line created by dX1 and dY1 (0-360 degrees)
   var ang2 = 0; // the rotation of the line created by dX2 and dY2 (0-360 degrees)
   var dAng = 0; // the difference between ang1 and ang2 (degrees)
@@ -194,6 +194,7 @@ function init() {
   var dY1T = 0; // the distance a pen has moved on the y-axis (between y1 and y2)
   var dX2T = 0; // the distance a pen has moved on the x-axis (between x3 and x4)
   var dY2T = 0; // the distance a pen has moved on the x-axis (between y3 and x4)
+  var dXYT = 0; // the distance from point 1 to point 3
   var ang1T = 0; // the rotation of the line created by dX1 and dY1 (0-360 degrees)
   var ang2T = 0; // the rotation of the line created by dX2 and dY2 (0-360 degrees)
   var dAngT = 0; // the difference between ang1 and ang2 (degrees)
@@ -260,7 +261,7 @@ function init() {
     } , 200);
   } , 175);
 
-  // 200ms -> calculating the rotation the line created by arctan(dY1/dX1)
+  // 200ms -> calculating the rotation the line created by arctan(dY1/dX1); calculating the distance from point 1 to point 3 'as the crow flies' (dXY)
   setTimeout(function() { 
     setInterval(function() {
       if (dX1 > 0 && dY1 > 0) { // Quadrant I (+dX1, +dY1)
@@ -282,6 +283,7 @@ function init() {
       } else { // in case something goes wrong, the existing ang1 will be used
         ang1 = ang1;
       }
+      dXY = Math.sqrt(Math.pow(Math.abs(dX1), 2) + Math.pow(Math.abs(dY1), 2)) > 300 ? 300 : Math.sqrt(Math.pow(Math.abs(dX1), 2) + Math.pow(Math.abs(dY1), 2));
     } , 200);
   } , 200);
 
@@ -371,7 +373,7 @@ function init() {
     } , 200);
   } , 175);
 
-  // 200ms -> calculating the rotation the line created by arctan(dY1/dX1)
+  // 200ms -> calculating the rotation the line created by arctan(dY1/dX1); calculating the distance from point 1 to point 3 'as the crow flies' (dXYT)
   setTimeout(function() { 
     setInterval(function() {
       if (dX1T > 0 && dY1T > 0) { // Quadrant I (+dX1, +dY1)
@@ -393,6 +395,7 @@ function init() {
       } else { // in case something goes wrong, the existing ang1 will be used
         ang1T = ang1T;
       }
+      dXYT = Math.sqrt(Math.pow(Math.abs(dX1T), 2) + Math.pow(Math.abs(dY1T), 2)) > 300 ? 300 : Math.sqrt(Math.pow(Math.abs(dX1T), 2) + Math.pow(Math.abs(dY1T), 2));
     } , 200);
   } , 200);
 
@@ -458,9 +461,9 @@ function init() {
   */
   function updatePage(e) {
     if (mouseDown == 1) { // when the mouse is held down 
-      console.log(sumdAng); // testing that sumdAng is returning accurate information
+      console.log(sumdAng, dXY) // testing that sumdAng and dXY are returning accurate information -> clockwise loops should lower sumdAng while anti-clockwise loops should raise it; dXY should be larger when moving the cursor faster and lower when moving it slower
       source.playbackRate.value = (sumdAng/420) * maxPlaybackRate; // calculating the playback rate based on the sumdAng variable
-      gainNode.gain.value = maxVol; // setting the volume to be max
+      gainNode.gain.value = (dXY/300) * maxVol; // calculating the volume based on the dXY variable
       canvasDraw(ctx,coX,coY,12); // drawing the canvas
     } else {
       gainNode.gain.value = 0; // setting the gainNode off when not holding down the mouse
@@ -481,7 +484,7 @@ function init() {
     getTouchPos(); // updates the touch coordinates
     console.log(sumdAngT); // testing that sumdAngT is returning accurate information
     source.playbackRate.value = (sumdAngT/420) * maxPlaybackRate; // calculating the playback rate based on the sumdAngT variable
-    gainNode.gain.value = maxVol; // setting the volume to be max
+    gainNode.gain.value = (dXYT/300) * maxVol; // calculating the volume based on the dXYT variable
     canvasDraw(ctx,touchX,touchY,12);
     event.preventDefault(); // prevents an additional mousedown event being triggered
   }
@@ -491,7 +494,7 @@ function init() {
     getTouchPos(e); // updates the touch coordinates
     console.log(sumdAngT); // testing that sumdAngT is returning accurate information
     source.playbackRate.value = (sumdAngT/420) * maxPlaybackRate; // calculating the playback rate based on the sumdAngT variable
-    gainNode.gain.value = maxVol; // setting the volume to be max
+    gainNode.gain.value = (dXYT/300) * maxVol; // calculating the volume based on the dXYT variable
     canvasDraw(ctx,touchX,touchY,12); 
     event.preventDefault(); // prevents scrolling action as a result of this touchmove triggering
   }
@@ -525,15 +528,8 @@ function init() {
       lastY = y;
     }
 
-    /* 
-    r = 0; 
-    g = 255; 
-    b = 0; 
-    a = 255;
-    */
-
       // defining canvas properties
-      ctx.strokeStyle = colour; // use "rgba('+r+', '+g+', '+b+', '+(a/255)+')"; for specific rgb colour
+      ctx.strokeStyle = "rgba("+colour[0]+", "+colour[1]+", "+colour[2]+", "+(colour[3]/255)+")";
       ctx.lineCap = 'round';
       ctx.beginPath();
       ctx.moveTo(x,y);
@@ -576,12 +572,28 @@ function init() {
         dY1 = 0;
         dX2 = 0;
         dY2 = 0;
+        dXY = 0;
         ang1 = 0;
         ang2 = 0;
         dAng = 0;
         sumdAng = 210;
-      } else if (key === 81) {
-        sumdAng = 420;
-      }
+        x1T = 0;
+        y1T = 0;
+        x2T = 0;
+        y2T = 0;
+        x3T = 0;
+        y3T = 0;
+        x4T = 0;
+        y4T = 0;
+        dX1T = 0;
+        dY1T = 0;
+        dX2T = 0;
+        dY2T = 0;
+        dXTY = 0;
+        ang1T = 0;
+        ang2T = 0;
+        dAngT = 0;
+        sumdAngT = 210;
+      } 
   }
 }

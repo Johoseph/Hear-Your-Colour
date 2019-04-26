@@ -60,19 +60,19 @@ button:active {
 }
 
 .green {
-  background-color: green;
+  background-color: rgb(0, 255, 0);
   top: 6px;
   left: 5px;
 }
 
 .red {
-  background-color: red;
+  background-color: rgb(255, 0, 0);
   top: 41px;
   left: 5px;
 }
 
 .blue {
-  background-color: blue;
+  background-color: rgb(0, 0, 255);
   top: 76px;
   left: 5px;
 }
