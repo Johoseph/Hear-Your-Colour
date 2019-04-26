@@ -29,8 +29,6 @@ h1 {
 /* button styling */
 
 button {
-    background-color: #0088cc;
-    background-image: linear-gradient(to bottom,  #0088cc 0%,#0055cc 100%);
     text-shadow: 1px 1px 1px black;
     text-align: center;
     color: white;
@@ -40,7 +38,6 @@ button {
     line-height: 2rem;
     padding: .5rem;
     display: block;
-    opacity: 0.3;
 
     transition: 1s all;
     -webkit-transition: 1s all;
@@ -62,13 +59,21 @@ button:active {
   color: white;
 }
 
-.mute {
+.green {
+  background-color: green;
+  top: 6px;
+  left: 5px;
+}
+
+.red {
+  background-color: red;
   top: 41px;
   left: 5px;
 }
 
-.clear {
-  top: 6px;
+.blue {
+  background-color: blue;
+  top: 76px;
   left: 5px;
 }
 

@@ -1,6 +1,6 @@
 /*
 NOTES
-- Due to XML sound request CORS issue, the website needs to be hosted on a server (localhost or zone) to be run
+- Due to XML sound request CORS issues, the website needs to be hosted on a server (localhost or zone) to be run
 */
 
 /*
@@ -18,15 +18,22 @@ Touch-screen sketchpad: https://zipso.net/a-simple-touchscreen-sketchpad-using-j
 */
 
 var startMessage = document.querySelector('.start-message');
+var appContents = document.querySelector('.app-contents');
 
 // Conditions to start running the application
 window.addEventListener('keydown', init);
 window.addEventListener('click', init);
+appContents.style.display = "none";
+
+var green = document.querySelector(".green");
+var blue = document.querySelector(".blue");
+var red = document.querySelector(".red");
 
 /*
 The init function allows for the application to be started on click or keydown rather than starting it straight away
 */
 function init() {
+  appContents.style.display = "block";
   document.body.removeChild(startMessage); // removes 'ready to start' message
 
   // create web audio api context (responsible for all sounds)
@@ -38,12 +45,12 @@ function init() {
   gainNode.connect(audioCtx.destination);
 
   /*
-  The getData function is used to get a specific sound. 
+  The getData functions are used to get all the specific sounds. 
   */
-  function getData() {
+  function getGreenData() {
   source = audioCtx.createBufferSource(); // creating sound source element
   request = new XMLHttpRequest();
-  request.open('GET', 'audio/forestGreen.mp3', true); // link to specific sound file here
+  request.open('GET', 'audio/green.mp3', true); // link to specific sound file here
   request.responseType = 'arraybuffer';
   request.onload = function() {
     var audioData = request.response;
@@ -59,13 +66,77 @@ function init() {
   request.send();
   }
 
+  function getBlueData() {
+  source = audioCtx.createBufferSource(); // creating sound source element
+  request = new XMLHttpRequest();
+  request.open('GET', 'audio/blue.mp3', true); // link to specific sound file here
+  request.responseType = 'arraybuffer';
+  request.onload = function() {
+    var audioData = request.response;
+    audioCtx.decodeAudioData(audioData, function(buffer) {
+        myBuffer = buffer;
+        songLength = buffer.duration;
+        source.buffer = myBuffer;
+        source.connect(gainNode); // connecting gainNode to provide volume
+        source.loop = true; // looping the sound
+        },
+      function(e){"Error with decoding audio data" + e.error});
+    }
+  request.send();
+  }
+
+  function getRedData() {
+  source = audioCtx.createBufferSource(); // creating sound source element
+  request = new XMLHttpRequest();
+  request.open('GET', 'audio/red.mp3', true); // link to specific sound file here
+  request.responseType = 'arraybuffer';
+  request.onload = function() {
+    var audioData = request.response;
+    audioCtx.decodeAudioData(audioData, function(buffer) {
+        myBuffer = buffer;
+        songLength = buffer.duration;
+        source.buffer = myBuffer;
+        source.connect(gainNode); // connecting gainNode to provide volume
+        source.loop = true; // looping the sound
+        },
+      function(e){"Error with decoding audio data" + e.error});
+    }
+  request.send();
+  }
+
+
   // creating variables to control playback rate
   var initialPlaybackRate = 1;
   var maxPlaybackRate = 3;
 
-  // requesting and starting mp3 sound playback
-  getData();
-  source.start(0); // method to play mp3
+  // requesting and starting mp3 sound playback (initialising with green)
+  getGreenData();
+  source.start(0);
+  var colour = 'green';
+
+  // changing the colour to green
+  green.onclick = function() {
+    source.stop(0);
+    getGreenData();
+    source.start(0);
+    colour = 'green';
+  }
+  
+  // changing the colour to blue
+  blue.onclick = function() {
+    source.stop(0);
+    getBlueData();
+    source.start();
+    colour = 'blue';
+  }
+
+  // changing the colour to red
+  red.onclick = function() {
+    source.stop(0)
+    getRedData();
+    source.start();
+    colour = 'red';
+  }
 
   // setting screen bound variables
   var WIDTH = window.innerWidth;
@@ -77,21 +148,21 @@ function init() {
   // creating variables to calculate line angles
   var coX; // the position of the cursor on the x-axis
   var coY; // the position of the cursor on the y-axis
-  var x1; // the position of the cursor on the x-axis every 200ms (0ms delay)
-  var y1; // the position of the cursor on the y-axis every 200ms (0ms delay)
-  var x2; // the position of the cursor on the x-axis every 200ms (100ms delay)
-  var y2; // the position of the cursor on the y-axis every 200ms (100ms delay)
-  var x3; // the position of the cursor on the x-axis every 200ms (50ms delay)
-  var y3; // the position of the cursor on the y-axis every 200ms (50ms delay)
-  var x4; // the position of the cursor on the x-axis every 200ms (150ms delay)
-  var y4; // the position of the cursor on the y-axis every 200ms (150ms delay)
-  var dX1; // the distance the cursor has moved on the x-axis (between x1 and x2)
-  var dY1; // the distance the cursor has moved on the y-axis (between y1 and y2)
-  var dX2; // the distance the cursor has moved on the x-axis (between x3 and x4)
-  var dY2; // the distance the cursor has moved on the x-axis (between y3 and x4)
-  var ang1; // the rotation of the line created by dX1 and dY1 (0-360 degrees)
-  var ang2; // the rotation of the line created by dX2 and dY2 (0-360 degrees)
-  var dAng; // the difference between ang1 and ang2 (degrees)
+  var x1 = 0; // the position of the cursor on the x-axis every 200ms (0ms delay)
+  var y1 = 0; // the position of the cursor on the y-axis every 200ms (0ms delay)
+  var x2 = 0; // the position of the cursor on the x-axis every 200ms (100ms delay)
+  var y2 = 0; // the position of the cursor on the y-axis every 200ms (100ms delay)
+  var x3 = 0; // the position of the cursor on the x-axis every 200ms (50ms delay)
+  var y3 = 0; // the position of the cursor on the y-axis every 200ms (50ms delay)
+  var x4 = 0; // the position of the cursor on the x-axis every 200ms (150ms delay)
+  var y4 = 0; // the position of the cursor on the y-axis every 200ms (150ms delay)
+  var dX1 = 0; // the distance the cursor has moved on the x-axis (between x1 and x2)
+  var dY1 = 0; // the distance the cursor has moved on the y-axis (between y1 and y2)
+  var dX2 = 0; // the distance the cursor has moved on the x-axis (between x3 and x4)
+  var dY2 = 0; // the distance the cursor has moved on the x-axis (between y3 and x4)
+  var ang1 = 0; // the rotation of the line created by dX1 and dY1 (0-360 degrees)
+  var ang2 = 0; // the rotation of the line created by dX2 and dY2 (0-360 degrees)
+  var dAng = 0; // the difference between ang1 and ang2 (degrees)
   var sumdAng = 210; // the sum of dAng over time
   
   // getCoordinates will be called everytime the mouse pointer moves
@@ -267,13 +338,17 @@ function init() {
       lastY = y;
     }
 
-    r = 0; 
-    g = 255; 
-    b = 0; 
+    r1 = 0; 
+    g1 = 255; 
+    b1 = 0; 
     a = 255;
+    r2 = 255; 
+    g2 = 0; 
+    b2 = 0; 
 
       // defining canvas properties
-      ctx.strokeStyle = "rgba("+r+","+g+","+b+","+(a/255)+")";
+      ctx.strokeStyle = colour;
+      // ctx.strokeStyle = "rgba("+r1+","+g1+","+b1+","+(a/255)+")";
       ctx.lineCap = 'round';
       ctx.beginPath();
       ctx.moveTo(x,y);
@@ -286,35 +361,37 @@ function init() {
       lastY = y;
   }
   
-
+  
   /*
   The below code is binds the 'r' key to a reset functionality that clears the canvas and resets sound to base values
   */
 
   // everytime a key is pressed the keyPress function will be run
   document.onkeydown = function(keyPress) {
-    keyPressR = keyPress || window.event;
-    var key = keyPress.which || keyPressR.keyCode;
+    keyPress = keyPress || window.event;
+    var key = keyPress.which || keyPress.keyCode;
       if (key === 82) { // key value for 'r'
       // clear canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      // set variables to base values
-      x1 = 0;
-      y1 = 0;
-      x2 = 0;
-      y2 = 0;
-      x3 = 0;
-      y3 = 0;
-      x4 = 0;
-      y4 = 0;
-      dX1 = 0;
-      dY1 = 0;
-      dX2 = 0;
-      dY2 = 0;
-      ang1 = 0;
-      ang2 = 0;
-      dAng = 0;
-      sumdAng = 210;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // set variables to base values
+        x1 = 0;
+        y1 = 0;
+        x2 = 0;
+        y2 = 0;
+        x3 = 0;
+        y3 = 0;
+        x4 = 0;
+        y4 = 0;
+        dX1 = 0;
+        dY1 = 0;
+        dX2 = 0;
+        dY2 = 0;
+        ang1 = 0;
+        ang2 = 0;
+        dAng = 0;
+        sumdAng = 210;
+      } else if (key === 81) {
+        sumdAng = 420;
       }
   }
 }
