@@ -467,6 +467,8 @@ function init() {
       canvasDraw(ctx,coX,coY,12); // drawing the canvas
     } else {
       gainNode.gain.value = 0; // setting the gainNode off when not holding down the mouse
+      lastX = -1;
+      lastY = -1;
     }
   }
 
@@ -503,6 +505,8 @@ function init() {
   function updatePageTouchEnd(e) {
     getTouchPos(e); // updates the touch coordinates
     gainNode.gain.value = 0; // setting the gainNode off when not touching the screen
+    lastX = -1;
+    lastY = -1;
   }
 
   /*
@@ -521,6 +525,9 @@ function init() {
   var lastX = -1
   var lastY = -1
 
+  /*
+  The canvasDraw function can be called to draw on the canvas
+  */
   function canvasDraw(ctx, x, y, size) {
 
     if (lastX == -1) {
@@ -546,6 +553,7 @@ function init() {
   if (ctx) {
     canvas.addEventListener('touchstart', updatePageTouchStart, false);
     canvas.addEventListener('touchmove', updatePageTouchMove, false);
+    canvas.addEventLister('touchend', updatePageTouchEnd, false);
   }
   
   /*
