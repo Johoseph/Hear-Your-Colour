@@ -24,9 +24,12 @@ window.addEventListener('keydown', init);
 window.addEventListener('click', init);
 appContents.style.display = "none";
 
+// uncomment the below code to link js variables to buttons
+/*
 var green = document.querySelector(".green");
 var blue = document.querySelector(".blue");
 var red = document.querySelector(".red");
+*/
 
 /*
 The init function allows for the application to be started on click or keydown rather than starting it straight away
@@ -114,11 +117,76 @@ function init() {
   // creating varialbes to control volume (gain)
   var maxVol = 5.0;
 
+    /*
+  The keyPress function is run everytime a key is pressed - specific keys have been binded to reset the drawing board or change the colour
+  */
+  document.onkeydown = function(keyPress) {
+    keyPress = keyPress || window.event;
+    var key = keyPress.which || keyPress.keyCode;
+      if (key === 82) { // pressing r resets the canvas
+      // clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // set variables to base values
+        x1 = 0;
+        y1 = 0;
+        x2 = 0;
+        y2 = 0;
+        x3 = 0;
+        y3 = 0;
+        x4 = 0;
+        y4 = 0;
+        dX1 = 0;
+        dY1 = 0;
+        dX2 = 0;
+        dY2 = 0;
+        dXY = 0;
+        ang1 = 0;
+        ang2 = 0;
+        dAng = 0;
+        sumdAng = 210;
+        x1T = 0;
+        y1T = 0;
+        x2T = 0;
+        y2T = 0;
+        x3T = 0;
+        y3T = 0;
+        x4T = 0;
+        y4T = 0;
+        dX1T = 0;
+        dY1T = 0;
+        dX2T = 0;
+        dY2T = 0;
+        dXTY = 0;
+        ang1T = 0;
+        ang2T = 0;
+        dAngT = 0;
+        sumdAngT = 210;
+      } else if (key === 81) { // pressing q changes the line colour to green
+        source.stop(0);
+        getGreenData();
+        source.start(0);
+        colour = ['0', '255', '0', '255'];
+      } else if (key === 87) { // pressing w changes the line colour to blue
+        source.stop(0);
+        getBlueData();
+        source.start();
+        colour = ['0', '0', '255', '255'];
+      } else if (key === 69) { // pressing e changes the line colour to red
+        source.stop(0)
+        getRedData();
+        source.start();
+        colour = ['255', '0', '0', '255'];
+      }
+  }
+
+  
   // requesting and starting mp3 sound playback (initialising with green)
   getGreenData();
   source.start(0);
   var colour = ['0', '255', '0', '255'];
 
+  // uncomment the below code to add button functionality
+  /*
   // changing the colour to green
   green.onclick = function() {
     source.stop(0);
@@ -142,6 +210,7 @@ function init() {
     source.start();
     colour = ['255', '0', '0', '255'];
   }
+  */
 
   // setting screen bound variables
   var WIDTH = window.innerWidth;
@@ -553,55 +622,6 @@ function init() {
   if (ctx) {
     canvas.addEventListener('touchstart', updatePageTouchStart, false);
     canvas.addEventListener('touchmove', updatePageTouchMove, false);
-    canvas.addEventLister('touchend', updatePageTouchEnd, false);
-  }
-  
-  /*
-  The below code is binds the 'r' key to a reset functionality that clears the canvas and resets sound to base values
-  */
-
-  // everytime a key is pressed the keyPress function will be run
-  document.onkeydown = function(keyPress) {
-    keyPress = keyPress || window.event;
-    var key = keyPress.which || keyPress.keyCode;
-      if (key === 82) { // key value for 'r'
-      // clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // set variables to base values
-        x1 = 0;
-        y1 = 0;
-        x2 = 0;
-        y2 = 0;
-        x3 = 0;
-        y3 = 0;
-        x4 = 0;
-        y4 = 0;
-        dX1 = 0;
-        dY1 = 0;
-        dX2 = 0;
-        dY2 = 0;
-        dXY = 0;
-        ang1 = 0;
-        ang2 = 0;
-        dAng = 0;
-        sumdAng = 210;
-        x1T = 0;
-        y1T = 0;
-        x2T = 0;
-        y2T = 0;
-        x3T = 0;
-        y3T = 0;
-        x4T = 0;
-        y4T = 0;
-        dX1T = 0;
-        dY1T = 0;
-        dX2T = 0;
-        dY2T = 0;
-        dXTY = 0;
-        ang1T = 0;
-        ang2T = 0;
-        dAngT = 0;
-        sumdAngT = 210;
-      } 
+    canvas.addEventListener('touchend', updatePageTouchEnd, false);
   }
 }
