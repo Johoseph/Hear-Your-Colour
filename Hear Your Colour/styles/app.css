@@ -77,6 +77,31 @@ button:active {
   left: 5px;
 }
 
+.orange {
+  background-color: rgb(255, 101, 34);
+  top: 111px;
+  left: 5px;
+}
+
+.black {
+  background-color: rgb(0, 0, 0);
+  top: 146px;
+  left: 5px;
+}
+
+.yellow {
+  background-color: rgb(255, 238, 0);
+  top: 181px;
+  left: 5px;
+}
+
+.pink {
+  background-color: rgb(248, 24, 148);
+  top: 216px;
+  left: 5px;
+}
+
+
 .start-message {
   position: absolute;
   font-size: 1.4rem;

@@ -29,6 +29,10 @@ appContents.style.display = "none";
 var green = document.querySelector(".green");
 var blue = document.querySelector(".blue");
 var red = document.querySelector(".red");
+var orange = document.querySelector(".orange");
+var black = document.querySelector(".black");
+var yellow = document.querySelector(".yellow");
+var pink = document.querySelector(".pink");
 */
 
 /*
@@ -110,6 +114,85 @@ function init() {
   request.send();
   }
 
+  // loading mp3 for orange
+  function getOrangeData() {
+  source = audioCtx.createBufferSource(); // creating sound source element
+  request = new XMLHttpRequest();
+  request.open('GET', 'audio/orange.mp3', true); // link to specific sound file here
+  request.responseType = 'arraybuffer';
+  request.onload = function() {
+    var audioData = request.response;
+    audioCtx.decodeAudioData(audioData, function(buffer) {
+        myBuffer = buffer;
+        songLength = buffer.duration;
+        source.buffer = myBuffer;
+        source.connect(gainNode); // connecting gainNode to provide volume
+        source.loop = true; // looping the sound
+        },
+      function(e){"Error with decoding audio data" + e.error});
+    }
+  request.send();
+  }
+
+  // loading mp3 for orange
+  function getBlackData() {
+  source = audioCtx.createBufferSource(); // creating sound source element
+  request = new XMLHttpRequest();
+  request.open('GET', 'audio/black.mp3', true); // link to specific sound file here
+  request.responseType = 'arraybuffer';
+  request.onload = function() {
+    var audioData = request.response;
+    audioCtx.decodeAudioData(audioData, function(buffer) {
+        myBuffer = buffer;
+        songLength = buffer.duration;
+        source.buffer = myBuffer;
+        source.connect(gainNode); // connecting gainNode to provide volume
+        source.loop = true; // looping the sound
+        },
+      function(e){"Error with decoding audio data" + e.error});
+    }
+  request.send();
+  }
+
+  // loading mp3 for orange
+  function getYellowData() {
+  source = audioCtx.createBufferSource(); // creating sound source element
+  request = new XMLHttpRequest();
+  request.open('GET', 'audio/yellow.mp3', true); // link to specific sound file here
+  request.responseType = 'arraybuffer';
+  request.onload = function() {
+    var audioData = request.response;
+    audioCtx.decodeAudioData(audioData, function(buffer) {
+        myBuffer = buffer;
+        songLength = buffer.duration;
+        source.buffer = myBuffer;
+        source.connect(gainNode); // connecting gainNode to provide volume
+        source.loop = true; // looping the sound
+        },
+      function(e){"Error with decoding audio data" + e.error});
+    }
+  request.send();
+  }
+
+  // loading mp3 for pink
+  function getPinkData() {
+  source = audioCtx.createBufferSource(); // creating sound source element
+  request = new XMLHttpRequest();
+  request.open('GET', 'audio/pink.mp3', true); // link to specific sound file here
+  request.responseType = 'arraybuffer';
+  request.onload = function() {
+    var audioData = request.response;
+    audioCtx.decodeAudioData(audioData, function(buffer) {
+        myBuffer = buffer;
+        songLength = buffer.duration;
+        source.buffer = myBuffer;
+        source.connect(gainNode); // connecting gainNode to provide volume
+        source.loop = true; // looping the sound
+        },
+      function(e){"Error with decoding audio data" + e.error});
+    }
+  request.send();
+  }
 
   // creating variables to control playback rate
   var maxPlaybackRate = 3;
@@ -176,6 +259,26 @@ function init() {
         getRedData();
         source.start();
         colour = ['255', '0', '0', '255'];
+      } else if (key === 65) { // pressing a changes the line colour to orange
+        source.stop(0);
+        getOrangeData();
+        source.start(0);
+        colour = ['255','101', '34', '255'];
+      } else if (key === 83) { // pressing s changes the line colour to black
+        source.stop(0);
+        getBlackData();
+        source.start(0);
+        colour = ['0','0', '0', '255'];
+      } else if (key === 68) { // pressing d changes the line colour to yellow
+        source.stop(0);
+        getYellowData();
+        source.start(0);
+        colour = ['255','238', '0', '255'];
+      } else if (key === 90) { // pressing z changes the line colour to pink
+        source.stop(0);
+        getPinkData();
+        source.start(0);
+        colour = ['248','24', '148', '255'];
       }
   }
 
@@ -209,6 +312,38 @@ function init() {
     getRedData();
     source.start();
     colour = ['255', '0', '0', '255'];
+  }
+
+  // changing the colour to orange
+  orange.onclick = function() {
+    source.stop(0)
+    getOrangeData();
+    source.start();
+    colour = ['255','101', '34', '255'];
+  }
+
+  // changing the colour to black
+  black.onclick = function() {
+    source.stop(0)
+    getBlackData();
+    source.start();
+    colour = ['0', '0', '0', '255'];
+  }
+  
+  // changing the colour to yellow
+  yellow.onclick = function() {
+    source.stop(0)
+    getYellowData();
+    source.start();
+    colour = ['255','238', '0', '255'];
+  }
+
+  // changing the colour to pink
+  pink.onclick = function() {
+    source.stop(0)
+    getPinkData();
+    source.start();
+    colour = ['248','24', '148', '255'];
   }
   */
 
