@@ -46,17 +46,33 @@ function init() {
   var AudioContext = window.AudioContext || window.webkitAudioContext;
   var audioCtx = new AudioContext();
   
-  // create gain node (responsible for volume)
-  var gainNode = audioCtx.createGain();
-  gainNode.connect(audioCtx.destination);
+  /*
+  create gain nodes (responsible for volume)
+  */
+
+  // create gain node for green sound
+  var gainNodeGreen = audioCtx.createGain();
+  gainNodeGreen.connect(audioCtx.destination);
+
+  // create gain node for blue sound
+  var gainNodeBlue = audioCtx.createGain();
+  gainNodeBlue.connect(audioCtx.destination);
+
+  // create gain node for red sound
+  var gainNodeRed = audioCtx.createGain();
+  gainNodeRed.connect(audioCtx.destination);
 
   /*
   The getData functions are used to get all the specific sounds. 
   */
 
+  var sourceGreen;
+  var sourceBlue;
+  var sourceRed;
+
   // loading mp3 for green
   function getGreenData() {
-  source = audioCtx.createBufferSource(); // creating sound source element
+  sourceGreen = audioCtx.createBufferSource(); // creating sound source element
   request = new XMLHttpRequest();
   request.open('GET', 'audio/green.mp3', true); // link to specific sound file here
   request.responseType = 'arraybuffer';
@@ -65,9 +81,9 @@ function init() {
     audioCtx.decodeAudioData(audioData, function(buffer) {
         myBuffer = buffer;
         songLength = buffer.duration;
-        source.buffer = myBuffer;
-        source.connect(gainNode); // connecting gainNode to provide volume
-        source.loop = true; // looping the sound
+        sourceGreen.buffer = myBuffer;
+        sourceGreen.connect(gainNodeGreen); // connecting gainNode to provide volume
+        sourceGreen.loop = true; // looping the sound
         },
       function(e){"Error with decoding audio data" + e.error});
     }
@@ -76,7 +92,7 @@ function init() {
 
   // loading mp3 for blue
   function getBlueData() {
-  source = audioCtx.createBufferSource(); // creating sound source element
+  sourceBlue = audioCtx.createBufferSource(); // creating sound source element
   request = new XMLHttpRequest();
   request.open('GET', 'audio/blue.mp3', true); // link to specific sound file here
   request.responseType = 'arraybuffer';
@@ -85,9 +101,9 @@ function init() {
     audioCtx.decodeAudioData(audioData, function(buffer) {
         myBuffer = buffer;
         songLength = buffer.duration;
-        source.buffer = myBuffer;
-        source.connect(gainNode); // connecting gainNode to provide volume
-        source.loop = true; // looping the sound
+        sourceBlue.buffer = myBuffer;
+        sourceBlue.connect(gainNodeBlue); // connecting gainNode to provide volume
+        sourceBlue.loop = true; // looping the sound
         },
       function(e){"Error with decoding audio data" + e.error});
     }
@@ -96,7 +112,7 @@ function init() {
 
   // loading mp3 for red
   function getRedData() {
-  source = audioCtx.createBufferSource(); // creating sound source element
+  sourceRed = audioCtx.createBufferSource(); // creating sound source element
   request = new XMLHttpRequest();
   request.open('GET', 'audio/red.mp3', true); // link to specific sound file here
   request.responseType = 'arraybuffer';
@@ -105,108 +121,44 @@ function init() {
     audioCtx.decodeAudioData(audioData, function(buffer) {
         myBuffer = buffer;
         songLength = buffer.duration;
-        source.buffer = myBuffer;
-        source.connect(gainNode); // connecting gainNode to provide volume
-        source.loop = true; // looping the sound
+        sourceRed.buffer = myBuffer;
+        sourceRed.connect(gainNodeRed); // connecting gainNode to provide volume
+        sourceRed.loop = true; // looping the sound
         },
       function(e){"Error with decoding audio data" + e.error});
     }
   request.send();
   }
 
-  // loading mp3 for orange
-  function getOrangeData() {
-  source = audioCtx.createBufferSource(); // creating sound source element
-  request = new XMLHttpRequest();
-  request.open('GET', 'audio/orange.mp3', true); // link to specific sound file here
-  request.responseType = 'arraybuffer';
-  request.onload = function() {
-    var audioData = request.response;
-    audioCtx.decodeAudioData(audioData, function(buffer) {
-        myBuffer = buffer;
-        songLength = buffer.duration;
-        source.buffer = myBuffer;
-        source.connect(gainNode); // connecting gainNode to provide volume
-        source.loop = true; // looping the sound
-        },
-      function(e){"Error with decoding audio data" + e.error});
-    }
-  request.send();
-  }
-
-  // loading mp3 for orange
-  function getBlackData() {
-  source = audioCtx.createBufferSource(); // creating sound source element
-  request = new XMLHttpRequest();
-  request.open('GET', 'audio/black.mp3', true); // link to specific sound file here
-  request.responseType = 'arraybuffer';
-  request.onload = function() {
-    var audioData = request.response;
-    audioCtx.decodeAudioData(audioData, function(buffer) {
-        myBuffer = buffer;
-        songLength = buffer.duration;
-        source.buffer = myBuffer;
-        source.connect(gainNode); // connecting gainNode to provide volume
-        source.loop = true; // looping the sound
-        },
-      function(e){"Error with decoding audio data" + e.error});
-    }
-  request.send();
-  }
-
-  // loading mp3 for orange
-  function getYellowData() {
-  source = audioCtx.createBufferSource(); // creating sound source element
-  request = new XMLHttpRequest();
-  request.open('GET', 'audio/yellow.mp3', true); // link to specific sound file here
-  request.responseType = 'arraybuffer';
-  request.onload = function() {
-    var audioData = request.response;
-    audioCtx.decodeAudioData(audioData, function(buffer) {
-        myBuffer = buffer;
-        songLength = buffer.duration;
-        source.buffer = myBuffer;
-        source.connect(gainNode); // connecting gainNode to provide volume
-        source.loop = true; // looping the sound
-        },
-      function(e){"Error with decoding audio data" + e.error});
-    }
-  request.send();
-  }
-
-  // loading mp3 for pink
-  function getPinkData() {
-  source = audioCtx.createBufferSource(); // creating sound source element
-  request = new XMLHttpRequest();
-  request.open('GET', 'audio/pink.mp3', true); // link to specific sound file here
-  request.responseType = 'arraybuffer';
-  request.onload = function() {
-    var audioData = request.response;
-    audioCtx.decodeAudioData(audioData, function(buffer) {
-        myBuffer = buffer;
-        songLength = buffer.duration;
-        source.buffer = myBuffer;
-        source.connect(gainNode); // connecting gainNode to provide volume
-        source.loop = true; // looping the sound
-        },
-      function(e){"Error with decoding audio data" + e.error});
-    }
-  request.send();
-  }
-
-  // creating variables to control playback rate
+  // creating variable to control playback rate
   var maxPlaybackRate = 3;
 
-  // creating varialbes to control volume (gain)
+  // creating variables to control volume (gain)
   var maxVol = 5.0;
 
-    /*
+  // requesting and starting mp3 sound playback (initialising with green)
+  getGreenData();
+  sourceGreen.start();
+  var colour = ['38', '99', '39', '255'];
+  var col = 1;
+
+  setTimeout(function() {
+    getBlueData();
+    sourceBlue.start();
+  } , 200);
+
+  setTimeout(function() {
+    getRedData();
+    sourceRed.start();
+  } , 400);
+
+  /*
   The keyPress function is run everytime a key is pressed - specific keys have been binded to reset the drawing board or change the colour
   */
   document.onkeydown = function(keyPress) {
     keyPress = keyPress || window.event;
     var key = keyPress.which || keyPress.keyCode;
-      if (key === 82) { // pressing r resets the canvas
+      if (key === 192) { // pressing ` resets the canvas
       // clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         // set variables to base values
@@ -226,7 +178,10 @@ function init() {
         ang1 = 0;
         ang2 = 0;
         dAng = 0;
-        sumdAng = 210;
+        sumdAng = 0;
+        greenD = [];
+        blueD = [];
+        redD = [];
         x1T = 0;
         y1T = 0;
         x2T = 0;
@@ -239,54 +194,27 @@ function init() {
         dY1T = 0;
         dX2T = 0;
         dY2T = 0;
-        dXTY = 0;
+        dXYT = 0;
         ang1T = 0;
         ang2T = 0;
         dAngT = 0;
-        sumdAngT = 210;
-      } else if (key === 81) { // pressing q changes the line colour to green
-        source.stop(0);
-        getGreenData();
-        source.start(0);
-        colour = ['0', '255', '0', '255'];
-      } else if (key === 87) { // pressing w changes the line colour to blue
-        source.stop(0);
-        getBlueData();
-        source.start();
-        colour = ['0', '0', '255', '255'];
-      } else if (key === 69) { // pressing e changes the line colour to red
-        source.stop(0)
-        getRedData();
-        source.start();
-        colour = ['255', '0', '0', '255'];
-      } else if (key === 65) { // pressing a changes the line colour to orange
-        source.stop(0);
-        getOrangeData();
-        source.start(0);
-        colour = ['255','101', '34', '255'];
-      } else if (key === 83) { // pressing s changes the line colour to black
-        source.stop(0);
-        getBlackData();
-        source.start(0);
-        colour = ['0','0', '0', '255'];
-      } else if (key === 68) { // pressing d changes the line colour to yellow
-        source.stop(0);
-        getYellowData();
-        source.start(0);
-        colour = ['255','238', '0', '255'];
-      } else if (key === 90) { // pressing z changes the line colour to pink
-        source.stop(0);
-        getPinkData();
-        source.start(0);
-        colour = ['248','24', '148', '255'];
+        sumdAngT = 0;
+      } else if (key === 49) { // pressing 1 changes the line colour to green
+        col = 1;
+        colour = ['38', '99', '39', '255'];
+      } else if (key === 50) { // pressing 2 changes the line colour to blue
+        col = 2;
+        colour = ['25', '33', '66', '255'];
+      } else if (key === 51) { // pressing 3 changes the line colour to red
+        col = 3;
+        colour = ['170', '0', '0', '255'];
+      } else if (key === 52) { // pressing 4 generates canvas URL
+        saveViaAJAX();
+        // window.location = "submit.php"
+      } else if (key === 53) { // pressing 5 submits the form
+        document.getElementById("done").click();
       }
   }
-
-  
-  // requesting and starting mp3 sound playback (initialising with green)
-  getGreenData();
-  source.start(0);
-  var colour = ['0', '255', '0', '255'];
 
   // uncomment the below code to add button functionality
   /*
@@ -304,46 +232,6 @@ function init() {
     getBlueData();
     source.start();
     colour = ['0', '0', '255', '255'];
-  }
-
-  // changing the colour to red
-  red.onclick = function() {
-    source.stop(0)
-    getRedData();
-    source.start();
-    colour = ['255', '0', '0', '255'];
-  }
-
-  // changing the colour to orange
-  orange.onclick = function() {
-    source.stop(0)
-    getOrangeData();
-    source.start();
-    colour = ['255','101', '34', '255'];
-  }
-
-  // changing the colour to black
-  black.onclick = function() {
-    source.stop(0)
-    getBlackData();
-    source.start();
-    colour = ['0', '0', '0', '255'];
-  }
-  
-  // changing the colour to yellow
-  yellow.onclick = function() {
-    source.stop(0)
-    getYellowData();
-    source.start();
-    colour = ['255','238', '0', '255'];
-  }
-
-  // changing the colour to pink
-  pink.onclick = function() {
-    source.stop(0)
-    getPinkData();
-    source.start();
-    colour = ['248','24', '148', '255'];
   }
   */
 
@@ -366,22 +254,11 @@ function init() {
   var dY1 = 0; // the distance the cursor has moved on the y-axis (between y1 and y2)
   var dX2 = 0; // the distance the cursor has moved on the x-axis (between x3 and x4)
   var dY2 = 0; // the distance the cursor has moved on the x-axis (between y3 and x4)
-  var dXY = 0; // the distance from point 1 to point 3
+  var dXY = 0; // the absolute distance from point 1 to point 3
   var ang1 = 0; // the rotation of the line created by dX1 and dY1 (0-360 degrees)
   var ang2 = 0; // the rotation of the line created by dX2 and dY2 (0-360 degrees)
   var dAng = 0; // the difference between ang1 and ang2 (degrees)
-  var sumdAng = 210; // the sum of dAng over time
-  
-  // getCoordinates will be called everytime the mouse pointer moves
-  window.onmousemove = getCoordinates;
-
-  /*
-  The getCoordinates function is used to set cursor coordinates to variables
-  */
-  function getCoordinates(e) { 
-    coX = e.pageX;
-    coY = e.pageY; 
-  }
+  var sumdAng = 0; // the sum of dAng over time
 
   // creating variables to calculate line angles (touch)
   var touchX; // the position of a touch on the x-axis
@@ -398,11 +275,27 @@ function init() {
   var dY1T = 0; // the distance a pen has moved on the y-axis (between y1 and y2)
   var dX2T = 0; // the distance a pen has moved on the x-axis (between x3 and x4)
   var dY2T = 0; // the distance a pen has moved on the x-axis (between y3 and x4)
-  var dXYT = 0; // the distance from point 1 to point 3
+  var dXYT = 0; // the absolute distance from point 1 to point 3
   var ang1T = 0; // the rotation of the line created by dX1 and dY1 (0-360 degrees)
   var ang2T = 0; // the rotation of the line created by dX2 and dY2 (0-360 degrees)
   var dAngT = 0; // the difference between ang1 and ang2 (degrees)
-  var sumdAngT = 210; // the sum of dAng over time
+  var sumdAngT = 0; // the sum of dAng over time
+
+  // creating variables to track the amount of each colour
+  var greenD = []; // the coordinates the cursor/pen has travelled while green
+  var blueD = []; // the coordinates the cursor/pen has travelled while blue 
+  var redD = []; // the coordinates the cursor/pen has travelled while red 
+  
+  // getCoordinates will be called everytime the mouse pointer moves
+  window.onmousemove = getCoordinates;
+
+  /*
+  The getCoordinates function is used to set cursor coordinates to variables
+  */
+  function getCoordinates(e) { 
+    coX = e.pageX;
+    coY = e.pageY; 
+  }
 
   /*
   The getTouchPos function is used to set touch coordinates to variables
@@ -532,7 +425,7 @@ function init() {
   // 220ms -> summing dAng every 200ms
   setTimeout(function() {
     setInterval(function() {
-        sumdAng = dAng + sumdAng > 420 ? 420 : dAng + sumdAng < 20 ? 20 : dAng + sumdAng; // limits sumdAng to values between 20 and 420
+        sumdAng = dAng + sumdAng > 400 ? 400 : dAng + sumdAng < -400 ? -400 : dAng + sumdAng; // limits sumdAng to values between -200 and 200
     }, 200)
   }, 220);
 
@@ -644,7 +537,7 @@ function init() {
   // 220ms -> summing dAng every 200ms
   setTimeout(function() {
     setInterval(function() {
-        sumdAngT = dAngT + sumdAngT > 420 ? 420 : dAngT + sumdAngT < 20 ? 20 : dAngT + sumdAngT; // limits sumdAng to values between 20 and 420
+        sumdAngT = dAngT + sumdAngT > 400 ? 400 : dAngT + sumdAngT < -400 ? -400 : dAngT + sumdAngT; // limits sumdAng to values between 20 and 420
     }, 200)
   }, 220);
 
@@ -662,21 +555,82 @@ function init() {
 
   /*
   The updatePage function is used to produce sound and visuals (on mouse down)
+  The col variable is used to detect which colour is currently active and increases colour variables accordingly
+  Comments have been included for the first statement but apply to all
   */
   function updatePage(e) {
-    if (mouseDown == 1) { // when the mouse is held down 
-      console.log(sumdAng, dXY) // testing that sumdAng and dXY are returning accurate information -> clockwise loops should lower sumdAng while anti-clockwise loops should raise it; dXY should be larger when moving the cursor faster and lower when moving it slower
-      source.playbackRate.value = (sumdAng/420) * maxPlaybackRate; // calculating the playback rate based on the sumdAng variable
-      gainNode.gain.value = (dXY/300) * maxVol; // calculating the volume based on the dXY variable
-      canvasDraw(ctx,coX,coY,12); // drawing the canvas
-    } else {
-      gainNode.gain.value = 0; // setting the gainNode off when not holding down the mouse
+    if (mouseDown == 1 && col == 1) { // when the mouse is held down and colour is green (col = 1)
+      // console.log(sumdAng) // testing that sumdAng and dXY are returning accurate information -> clockwise loops should lower sumdAng while anti-clockwise loops should raise it; dXY should be larger when moving the cursor faster and lower when moving it slower
+      // console.log(greenD); // testing that colour variable (greenD) is returning accurate information -> colour variable should increase steadily with mouse movement (faster with larger mouse movements)
+      console.log(greenD.length, blueD.length, redD.length);
+      // console.log(gainNodeGreen.gain.value, gainNodeBlue.gain.value);
+      if (greenD.includes((Math.ceil(coX/5)*5).toString() + (Math.ceil(coY/5)*5).toString()) === false) {
+        greenD.push((Math.ceil(coX/5)*5).toString() + (Math.ceil(coY/5)*5).toString());
+      }
+      blueD = blueD.filter(function(el) {
+        return !greenD.includes(el);
+      });
+      redD = redD.filter(function(el) {
+        return !greenD.includes(el);
+      });
+      sourceGreen.detune.value = sumdAng * 5; // calculating the detune amount (cents) based on the sumdAng variable
+      gainNodeGreen.gain.value = (greenD.length/3000) * maxVol;
+      gainNodeBlue.gain.value = (blueD.length/3000) * maxVol; // playing cumulative blue sound value
+      gainNodeRed.gain.value = (redD.length/3000) * maxVol;
+      canvasDraw(ctx,coX,coY,5); // drawing the canvas
+    } else if (mouseDown == 1 && col == 2) { // when the mouse is held down and colour is blue (col = 2)
+      // console.log(sumdAng, dXY)
+      console.log(greenD.length, blueD.length, redD.length);
+      // console.log(gainNodeGreen.gain.value, gainNodeBlue.gain.value);
+      if (blueD.includes((Math.ceil(coX/5)*5).toString() + (Math.ceil(coY/5)*5).toString()) === false) {
+        blueD.push((Math.ceil(coX/5)*5).toString() + (Math.ceil(coY/5)*5).toString());
+      }
+      greenD = greenD.filter(function(el) {
+        return !blueD.includes(el);
+      });
+      redD = redD.filter(function(el) {
+        return !blueD.includes(el);
+      })
+      sourceBlue.detune.value = sumdAng * 5;
+      gainNodeGreen.gain.value = (greenD.length/3000) * maxVol;
+      gainNodeBlue.gain.value = (blueD.length/3000) * maxVol;
+      gainNodeRed.gain.value = (redD.length/3000) * maxVol;
+      canvasDraw(ctx,coX,coY,5);
+    } else if (mouseDown == 1 && col == 3) {
+      // console.log(sumdAng, dXY)
+      console.log(greenD.length, blueD.length, redD.length);
+      // console.log(gainNodeGreen.gain.value, gainNodeBlue.gain.value);
+      if (redD.includes((Math.ceil(coX/5)*5).toString() + (Math.ceil(coY/5)*5).toString()) === false) {
+        redD.push((Math.ceil(coX/5)*5).toString() + (Math.ceil(coY/5)*5).toString());
+      }
+      greenD = greenD.filter(function(el) {
+        return !redD.includes(el);
+      });
+      blueD = blueD.filter(function(el) {
+        return !redD.includes(el);
+      })
+      sourceRed.detune.value = sumdAng * 5;
+      gainNodeGreen.gain.value = (greenD.length/3000) * maxVol;
+      gainNodeBlue.gain.value = (blueD.length/3000) * maxVol;
+      gainNodeRed.gain.value = (redD.length/3000) * maxVol;
+      canvasDraw(ctx,coX,coY,5);
+    } else { // when the mouse is not held down
+      // console.log(sumdAng);
+      console.log(greenD.length, blueD.length, redD.length);
+      // console.log(gainNodeGreen.gain.value, gainNodeBlue.gain.value);
+      sourceRed.detune.value = 0;
+      sourceBlue.detune.value = 0;
+      sourceGreen.detune.value = 0;
+      gainNodeGreen.gain.value = (greenD.length/3000) * maxVol;
+      gainNodeBlue.gain.value = (blueD.length/3000) * maxVol;
+      gainNodeRed.gain.value = (redD.length/3000) * maxVol;
       lastX = -1;
       lastY = -1;
+      sumdAng = 0;
     }
   }
 
-  // touch functions will be called everytime a touch element changes
+   // touch functions will be called everytime a touch element changes
   document.ontouchstart = updatePageTouchStart;
   document.ontouchmove = updatePageTouchMove;
   document.ontouchend = updatePageTouchEnd;
@@ -686,31 +640,152 @@ function init() {
   */
 
   // runs when a new touch starts
-  function updatePageTouchStart() {
-    getTouchPos(); // updates the touch coordinates
-    console.log(sumdAngT); // testing that sumdAngT is returning accurate information
-    source.playbackRate.value = (sumdAngT/420) * maxPlaybackRate; // calculating the playback rate based on the sumdAngT variable
-    gainNode.gain.value = (dXYT/300) * maxVol; // calculating the volume based on the dXYT variable
-    canvasDraw(ctx,touchX,touchY,12);
-    event.preventDefault(); // prevents an additional mousedown event being triggered
+  function updatePageTouchStart() { // runs on touch start
+    if (col == 1) { // when the colour is green (col = 1)
+      getTouchPos(); // updates touch coordinates
+      // console.log(sumdAngT) // testing that sumdAngT and dXY are returning accurate information -> clockwise loops should lower sumdAng while anti-clockwise loops should raise it; dXY should be larger when moving the cursor faster and lower when moving it slower
+      // console.log(greenD); // testing that colour variable (greenD) is returning accurate information -> colour variable should increase steadily with mouse movement (faster with larger mouse movements)
+      console.log(greenD.length, blueD.length, redD.length);
+      // console.log(gainNodeGreen.gain.value, gainNodeBlue.gain.value);
+      if (greenD.includes((Math.ceil(touchX/5)*5).toString() + (Math.ceil(touchY/5)*5).toString()) === false) {
+        greenD.push((Math.ceil(touchX/5)*5).toString() + (Math.ceil(touchY/5)*5).toString());
+      }
+      blueD = blueD.filter(function(el) {
+        return !greenD.includes(el);
+      });
+      redD = redD.filter(function(el) {
+        return !greenD.includes(el);
+      });
+      sourceGreen.detune.value = sumdAngT * 5; // calculating the detune amount (cents) based on the sumdAng variable
+      gainNodeGreen.gain.value = (greenD.length/3000) * maxVol;
+      gainNodeBlue.gain.value = (blueD.length/3000) * maxVol; // playing cumulative blue sound value
+      gainNodeRed.gain.value = (redD.length/3000) * maxVol;
+      canvasDraw(ctx,touchX,touchY,5); // drawing the canvas
+      event.preventDefault();
+    } else if (col == 2) { // when the colour is blue (col = 2)
+      getTouchPos();
+      // console.log(sumdAngT, dXY)
+      console.log(greenD.length, blueD.length, redD.length);
+      // console.log(gainNodeGreen.gain.value, gainNodeBlue.gain.value);
+      if (blueD.includes((Math.ceil(touchX/5)*5).toString() + (Math.ceil(touchY/5)*5).toString()) === false) {
+        blueD.push((Math.ceil(touchX/5)*5).toString() + (Math.ceil(touchY/5)*5).toString());
+      }
+      greenD = greenD.filter(function(el) {
+        return !blueD.includes(el);
+      });
+      redD = redD.filter(function(el) {
+        return !blueD.includes(el);
+      })
+      sourceBlue.detune.value = sumdAngT * 5;
+      gainNodeGreen.gain.value = (greenD.length/3000) * maxVol;
+      gainNodeBlue.gain.value = (blueD.length/3000) * maxVol;
+      gainNodeRed.gain.value = (redD.length/3000) * maxVol;
+      canvasDraw(ctx,touchX,touchY,5);
+      event.preventDefault();
+    } else if (col == 3) {
+      getTouchPos();
+      // console.log(sumdAngT, dXY)
+      console.log(greenD.length, blueD.length, redD.length);
+      // console.log(gainNodeGreen.gain.value, gainNodeBlue.gain.value);
+      if (redD.includes((Math.ceil(touchX/5)*5).toString() + (Math.ceil(touchY/5)*5).toString()) === false) {
+        redD.push((Math.ceil(touchX/5)*5).toString() + (Math.ceil(touchY/5)*5).toString());
+      }
+      greenD = greenD.filter(function(el) {
+        return !redD.includes(el);
+      });
+      blueD = blueD.filter(function(el) {
+        return !redD.includes(el);
+      })
+      sourceRed.detune.value = sumdAngT * 5;
+      gainNodeGreen.gain.value = (greenD.length/3000) * maxVol;
+      gainNodeBlue.gain.value = (blueD.length/3000) * maxVol;
+      gainNodeRed.gain.value = (redD.length/3000) * maxVol;
+      canvasDraw(ctx,touchX,touchY,5);
+      event.preventDefault();
+    }
   }
 
-  // runs when an existing touch is moving
-  function updatePageTouchMove(e) { 
-    getTouchPos(e); // updates the touch coordinates
-    console.log(sumdAngT); // testing that sumdAngT is returning accurate information
-    source.playbackRate.value = (sumdAngT/420) * maxPlaybackRate; // calculating the playback rate based on the sumdAngT variable
-    gainNode.gain.value = (dXYT/300) * maxVol; // calculating the volume based on the dXYT variable
-    canvasDraw(ctx,touchX,touchY,12); 
-    event.preventDefault(); // prevents scrolling action as a result of this touchmove triggering
+  // runs when a new touch starts
+  function updatePageTouchMove(e) { // runs on touch start
+    if (col == 1) { // when the colour is green (col = 1)
+      getTouchPos(e); // updates touch coordinates
+      // console.log(sumdAngT) // testing that sumdAngT and dXY are returning accurate information -> clockwise loops should lower sumdAng while anti-clockwise loops should raise it; dXY should be larger when moving the cursor faster and lower when moving it slower
+      // console.log(greenD); // testing that colour variable (greenD) is returning accurate information -> colour variable should increase steadily with mouse movement (faster with larger mouse movements)
+      console.log(greenD.length, blueD.length, redD.length);
+      // console.log(gainNodeGreen.gain.value, gainNodeBlue.gain.value);
+      if (greenD.includes((Math.ceil(touchX/5)*5).toString() + (Math.ceil(touchY/5)*5).toString()) === false) {
+        greenD.push((Math.ceil(touchX/5)*5).toString() + (Math.ceil(touchY/5)*5).toString());
+      }
+      blueD = blueD.filter(function(el) {
+        return !greenD.includes(el);
+      });
+      redD = redD.filter(function(el) {
+        return !greenD.includes(el);
+      });
+      sourceGreen.detune.value = sumdAngT * 5; // calculating the detune amount (cents) based on the sumdAng variable
+      gainNodeGreen.gain.value = (greenD.length/3000) * maxVol;
+      gainNodeBlue.gain.value = (blueD.length/3000) * maxVol; // playing cumulative blue sound value
+      gainNodeRed.gain.value = (redD.length/3000) * maxVol;
+      canvasDraw(ctx,touchX,touchY,5); // drawing the canvas
+      event.preventDefault();
+    } else if (col == 2) { // when the colour is blue (col = 2)
+      getTouchPos(e);
+      // console.log(sumdAngT, dXY)
+      console.log(greenD.length, blueD.length, redD.length);
+      // console.log(gainNodeGreen.gain.value, gainNodeBlue.gain.value);
+      if (blueD.includes((Math.ceil(touchX/5)*5).toString() + (Math.ceil(touchY/5)*5).toString()) === false) {
+        blueD.push((Math.ceil(touchX/5)*5).toString() + (Math.ceil(touchY/5)*5).toString());
+      }
+      greenD = greenD.filter(function(el) {
+        return !blueD.includes(el);
+      });
+      redD = redD.filter(function(el) {
+        return !blueD.includes(el);
+      })
+      sourceBlue.detune.value = sumdAngT * 5;
+      gainNodeGreen.gain.value = (greenD.length/3000) * maxVol;
+      gainNodeBlue.gain.value = (blueD.length/3000) * maxVol;
+      gainNodeRed.gain.value = (redD.length/3000) * maxVol;
+      canvasDraw(ctx,touchX,touchY,5);
+      event.preventDefault();
+    } else if (col == 3) {
+      getTouchPos(e);
+      // console.log(sumdAngT, dXY)
+      console.log(greenD.length, blueD.length, redD.length);
+      // console.log(gainNodeGreen.gain.value, gainNodeBlue.gain.value);
+      if (redD.includes((Math.ceil(touchX/5)*5).toString() + (Math.ceil(touchY/5)*5).toString()) === false) {
+        redD.push((Math.ceil(touchX/5)*5).toString() + (Math.ceil(touchY/5)*5).toString());
+      }
+      greenD = greenD.filter(function(el) {
+        return !redD.includes(el);
+      });
+      blueD = blueD.filter(function(el) {
+        return !redD.includes(el);
+      })
+      sourceRed.detune.value = sumdAngT * 5;
+      gainNodeGreen.gain.value = (greenD.length/3000) * maxVol;
+      gainNodeBlue.gain.value = (blueD.length/3000) * maxVol;
+      gainNodeRed.gain.value = (redD.length/3000) * maxVol;
+      canvasDraw(ctx,touchX,touchY,5);
+      event.preventDefault();
+    }
   }
 
   // runs when an existing touch ends
   function updatePageTouchEnd(e) {
     getTouchPos(e); // updates the touch coordinates
-    gainNode.gain.value = 0; // setting the gainNode off when not touching the screen
+    // console.log(sumdAngT);
+    console.log(greenD.length, blueD.length, redD.length);
+    // console.log(gainNodeGreen.gain.value, gainNodeBlue.gain.value);
+    //sourceRed.detune.value = 0;
+    //sourceBlue.detune.value = 0;
+    //sourceGreen.detune.value = 0;
+    gainNodeGreen.gain.value = (greenD.length/3000) * maxVol;
+    gainNodeBlue.gain.value = (blueD.length/3000) * maxVol;
+    gainNodeRed.gain.value = (redD.length/3000) * maxVol;
     lastX = -1;
     lastY = -1;
+    sumdAngT = 0;
   }
 
   /*
@@ -741,13 +816,14 @@ function init() {
 
       // defining canvas properties
       ctx.strokeStyle = "rgba("+colour[0]+", "+colour[1]+", "+colour[2]+", "+(colour[3]/255)+")";
-      ctx.lineCap = 'round';
+      ctx.lineCap = "round";
       ctx.beginPath();
-      ctx.moveTo(x,y);
+      ctx.moveTo(lastX,lastY);
       ctx.lineTo(x,y);
       ctx.lineWidth = size;
       ctx.stroke();
-      ctx.closePath(); 
+      ctx.closePath();
+
 
       lastX = x;
       lastY = y;
@@ -758,5 +834,17 @@ function init() {
     canvas.addEventListener('touchstart', updatePageTouchStart, false);
     canvas.addEventListener('touchmove', updatePageTouchMove, false);
     canvas.addEventListener('touchend', updatePageTouchEnd, false);
+  }
+
+  function saveViaAJAX() {
+  var drawing = canvas.toDataURL();
+  var debugConsole = document.getElementById("debugConsole");
+  debugConsole.value = drawing;
+  var greenConsole = document.getElementById("greenConsole");
+  greenConsole.value = greenD.length;
+  var blueConsole = document.getElementById("blueConsole");
+  blueConsole.value = blueD.length;
+  var redConsole = document.getElementById("redConsole");
+  redConsole.value = redD.length;
   }
 }
